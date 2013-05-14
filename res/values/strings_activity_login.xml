@@ -1,0 +1,27 @@
+<resources>
+
+    <string name="title_activity_login">Sign in to PrivacyProxy</string>
+
+    <!-- Strings related to login -->
+    <string name="prompt_username">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_register">Register</string>
+    
+    <string name="action_sign_in">Sign in</string>
+	<string name="action_recover_password">Recover password</string>
+    
+    <string name="login_progress_signing_in">Signing in&#8230;</string>
+    
+    <string name="error_login">Login was not successful</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_password_short">This password is too short</string>
+	
+	<string name="label_login">Login to PrivacyProxy:</string>
+	
+	<string name="register_label">Don\'t have an account yet?</string>
+	
+	<string name="logo_description">Privacy Proxy Logo</string>
+
+    <string name="login_progress_registering">Creating account&#8230;</string>
+	
+</resources>
