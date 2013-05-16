@@ -2,11 +2,8 @@
 <resources>
 
     <string name="app_name">Privacy Proxy</string>
-    <string name="title_activity_fullscreen">FullscreenActivity</string>
-    <string name="dummy_button">Dummy Button</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="title_activity_menu">MenuActivity</string>
-    <string name="action_settings">Settings</string>
-    <string name="hello_world">Hello world!</string>
+    
+    <string name="pref_username">PREF_USERNAME</string>
+    <string name="pref_session_id">PREF_SESSION_ID</string>
 
 </resources>

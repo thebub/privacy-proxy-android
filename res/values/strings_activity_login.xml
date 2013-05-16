@@ -23,5 +23,13 @@
 	<string name="logo_description">Privacy Proxy Logo</string>
 
     <string name="login_progress_registering">Creating account&#8230;</string>
+
+    <string name="prompt_email">E-Mail</string>
+
+    <string name="label_registration">Register for Privacy Proxy:</string>
+
+    <string name="action_cancel">Cancel</string>
+
+    <string name="label_accept_tos">Accept Terms of Service</string>
 	
 </resources>
