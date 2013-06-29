@@ -1,8 +1,10 @@
-package net.thebub.privacyproxy;
+package net.thebub.privacyproxy.activities;
 
+import net.thebub.privacyproxy.PrivacyProxyAPI;
 import net.thebub.privacyproxy.PrivacyProxyAPI.APICommand;
 import net.thebub.privacyproxy.PrivacyProxyAPI.APIResponse;
 import net.thebub.privacyproxy.PrivacyProxyAPI.LoginResponse;
+import net.thebub.privacyproxy.R;
 import net.thebub.privacyproxy.util.ServerConnection;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -22,6 +24,7 @@ import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.TextView.BufferType;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -55,6 +58,7 @@ public class LoginActivity extends Activity {
 			this.mLoginView = findViewById(R.id.login_form);
 			
 			this.mUsernameView = (EditText) findViewById(R.id.username);
+			mUsernameView.setText(mPreferences.getString(getString(R.string.pref_username), ""), TextView.BufferType.EDITABLE);
 			this.mPasswordView = (EditText) findViewById(R.id.password);
 			this.mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 				@Override
@@ -87,15 +91,12 @@ public class LoginActivity extends Activity {
 			mRegisterButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					mRegistrationForm.mUsernameView.requestFocus();
 					fadeViews(mLoginView, mRegistrationForm.mRegisterView);
+					mRegistrationForm.mUsernameView.requestFocus();
 				}
 			});
 			
-
-			this.mUsername = mPreferences.getString(getString(R.string.pref_username), "");
-			
-			if(this.mUsername.length() == 0) {
+			if(mPreferences.getString(getString(R.string.pref_username), "").length() == 0) {
 				this.mUsernameView.requestFocus();
 			} else {
 				this.mPasswordView.requestFocus();
@@ -197,6 +198,7 @@ public class LoginActivity extends Activity {
 
 				if (success) {
 					Intent openMenuIntent = new Intent(LoginActivity.this, MenuActivity.class);
+					openMenuIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 					startActivity(openMenuIntent);
 					mRecoverPasswordButton.setVisibility(View.GONE);
 					
@@ -238,25 +240,25 @@ public class LoginActivity extends Activity {
 			this.mRegisterView = findViewById(R.id.registration_form);
 			
 			this.mUsernameView = (EditText) findViewById(R.id.registration_username);
-			this.mUsernameView = (EditText) findViewById(R.id.registration_email);
-			this.mUsernameView = (EditText) findViewById(R.id.registration_password);
+			this.mEmailView = (EditText) findViewById(R.id.registration_email);
+			this.mPasswordView = (EditText) findViewById(R.id.registration_password);
 			this.mTOS = (CheckBox) findViewById(R.id.registration_tos);
 			
 			this.mRegisterButton = (Button) findViewById(R.id.registration_register);
 			this.mCancelButton = (Button) findViewById(R.id.registration_cancel);
-			
+						
 			this.mRegisterButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-//					attemptRegistration();
+					attemptRegistration();
 				}
 			});
 			
 			this.mCancelButton.setOnClickListener(new View.OnClickListener() {
 				@Override
 				public void onClick(View view) {
-					mLoginForm.mUsernameView.requestFocus();
 					fadeViews(mRegisterView, mLoginForm.mLoginView);
+					mLoginForm.mUsernameView.requestFocus();
 				}
 			});
 		}
@@ -269,7 +271,7 @@ public class LoginActivity extends Activity {
 			if (this.checkForm()) {
 				// Show a progress spinner, and kick off a background task to
 				// perform the user login attempt.
-				mLoginStatusMessageView.setText(R.string.login_progress_signing_in);
+				mLoginStatusMessageView.setText(R.string.login_progress_registering);
 				fadeViews(mRegisterView, mAuthStatusView);
 				
 				mAuthTask = new UserRegisterTask();
@@ -290,6 +292,12 @@ public class LoginActivity extends Activity {
 
 			boolean cancel = false;
 			View focusView = null;
+			
+			if(!this.mTOS.isChecked()) {
+				mTOS.setError(getString(R.string.error_field_required));
+				focusView = this.mTOS;
+				cancel = true;
+			}
 
 			// Check for a valid password.
 			if (TextUtils.isEmpty(mPassword)) {
@@ -297,9 +305,9 @@ public class LoginActivity extends Activity {
 				focusView = mPasswordView;
 				cancel = true;
 			} else if (mPassword.length() < 8) {
-//				mPasswordView.setError(getString(R.string.error_password_short));
-//				focusView = mPasswordView;
-//				cancel = true;
+				mPasswordView.setError(getString(R.string.error_password_short));
+				focusView = mPasswordView;
+				cancel = true;
 			}
 			
 			// Check for a valid email address.
@@ -328,14 +336,15 @@ public class LoginActivity extends Activity {
 			@Override
 			protected Boolean doInBackground(Void... none) {
 							
-				net.thebub.privacyproxy.PrivacyProxyAPI.LoginData.Builder requestBuilder = PrivacyProxyAPI.LoginData.newBuilder();
+				net.thebub.privacyproxy.PrivacyProxyAPI.CreateUserRequest.Builder requestBuilder = PrivacyProxyAPI.CreateUserRequest.newBuilder();
 				
 				requestBuilder.setUsername(mUsername);
+				requestBuilder.setEmail(mEmail);
 				requestBuilder.setPassword(mPassword);
 				
 				ServerConnection connection = ServerConnection.getInstance();
 				
-				APIResponse response = connection.sendRequest(APICommand.login, requestBuilder.build().toByteString());;
+				APIResponse response = connection.sendRequest(APICommand.createUser, requestBuilder.build().toByteString());;
 				
 				if(response == null || !response.getSuccess()) {
 					return false;
@@ -365,7 +374,13 @@ public class LoginActivity extends Activity {
 
 				if (success) {
 					Intent openMenuIntent = new Intent(LoginActivity.this, MenuActivity.class);
+					openMenuIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
 					startActivity(openMenuIntent);
+					
+					mUsernameView.setText("",BufferType.EDITABLE);
+					mPasswordView.setText("",BufferType.EDITABLE);
+					mEmailView.setText("",BufferType.EDITABLE);
+					mTOS.setChecked(false);
 					
 					fadeViews(mAuthStatusView, mLoginForm.mLoginView);
 				} else {
@@ -402,7 +417,7 @@ public class LoginActivity extends Activity {
 
 		setContentView(R.layout.activity_login);
 		
-		mPreferences = getPreferences(Context.MODE_PRIVATE);
+		mPreferences = getSharedPreferences("PrivacyProxyPreferences", Context.MODE_PRIVATE);
 		
 		mAuthStatusView = findViewById(R.id.login_status);
 		mLoginStatusMessageView = (TextView) findViewById(R.id.login_status_message);

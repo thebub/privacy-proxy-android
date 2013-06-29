@@ -38,6 +38,7 @@ public class ServerConnection {
 		this.serverSocket = new Socket(serverAddress, serverPort);
 	}
 	
+	@SuppressWarnings("unused")
 	private void disconnect() throws IOException {
 		if(serverSocket != null || serverSocket.isConnected()) {
 			this.serverSocket.close();
@@ -67,17 +68,17 @@ public class ServerConnection {
 	}
 	
 	private APIResponse receive() {
-		APIResponse response;
+		APIResponse receivedResponse = null;
 		try {		
         	InputStream is = this.serverSocket.getInputStream();
         	
-        	response = APIResponse.parseDelimitedFrom(is);
+        	receivedResponse = APIResponse.parseDelimitedFrom(is);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		}
-                      
-        return response;
+		                      
+        return receivedResponse;
 	}
 	
 	public synchronized APIResponse sendRequest(PrivacyProxyAPI.APICommand command) {
@@ -110,11 +111,14 @@ public class ServerConnection {
 			return null;
 		}
 		
-		return this.receive();
+		APIResponse receivedResponse = this.receive();
+		
+		try {
+			this.disconnect();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+		return receivedResponse;
 	}
-	
-	private APIResponse receiveResponse() {
-		return this.receive();
-	}
-
 }

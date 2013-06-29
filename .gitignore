@@ -1,2 +1,4 @@
 bin
 gen
+common-build
+lint.xml
