@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".WebsiteDetails" >
+    tools:context=".WebsiteDetailsActivity" >
 
     <LinearLayout
         android:id="@+id/webdetails_status"
@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
             android:fontFamily="sans-serif-light"
-            android:text="@string/webdetails_loading"
+            android:text="@string/website_details_loading"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
 
@@ -44,7 +44,7 @@
             android:showDividers="middle|end" >
 
             <TextView
-                android:id="@+id/webdetails_desc"
+                android:id="@+id/weblogdetails_entry_desc"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
@@ -58,6 +58,22 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="6dp"
                 android:layout_weight="1"
+                android:textAppearance="?android:attr/textAppearanceLarge" />
+
+        </TableRow>
+
+        <TableRow
+            android:id="@+id/tableRow2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" >
+
+            <TextView
+                android:id="@+id/TextView01"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_margin="6dp"
+                android:layout_weight="1"
+                android:text="@string/website_details_list_label"
                 android:textAppearance="?android:attr/textAppearanceLarge" />
 
         </TableRow>

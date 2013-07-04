@@ -145,7 +145,7 @@ public class WeblogActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				WebLogWebsite item = (WebLogWebsite) parent.getAdapter().getItem(position);
 				
-				Intent openWeblogWebsiteIntent = new Intent(parent.getContext(), WebsiteDetails.class);
+				Intent openWeblogWebsiteIntent = new Intent(parent.getContext(), WebsiteDetailsActivity.class);
 				
 				openWeblogWebsiteIntent.putExtra("websiteID", item.getId());
 				openWeblogWebsiteIntent.putExtra("websiteName", item.getWebsite());

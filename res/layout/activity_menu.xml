@@ -7,12 +7,11 @@
 
     <ImageView
         android:id="@+id/imageView1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:layout_centerHorizontal="true"
         android:layout_margin="16dp"
-        android:src="@drawable/privacy_proxy_icon" />
+        android:src="@drawable/icon" />
 
     <TextView
         android:id="@+id/textView1"
@@ -28,17 +27,6 @@
         android:text="@string/menu_welcome"
         android:textAppearance="?android:attr/textAppearanceMedium" />
 
-    <ListView
-        android:id="@+id/menu_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_below="@+id/textView2" >
-
-    </ListView>
-
     <TextView
         android:id="@+id/textView2"
         android:layout_width="match_parent"
@@ -51,5 +39,23 @@
         android:gravity="center"
         android:text="@string/menu_description"
         android:textAppearance="?android:attr/textAppearanceSmall" />
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="1dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView2"
+        android:layout_marginLeft="6dp"
+        android:layout_marginRight="6dp"
+        android:background="@android:color/darker_gray" />
+
+    <ListView
+        android:id="@+id/menu_list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/textView2" >
+
+    </ListView>
 
 </RelativeLayout>

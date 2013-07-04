@@ -10,6 +10,7 @@ import net.thebub.privacyproxy.PrivacyProxyAPI.WebLogWebsiteDataRequest;
 import net.thebub.privacyproxy.PrivacyProxyAPI.WebLogWebsiteDataResponse;
 import net.thebub.privacyproxy.PrivacyProxyAPI.WebLogWebsiteDataResponse.WebLogWebsiteData;
 import net.thebub.privacyproxy.R;
+import net.thebub.privacyproxy.util.DataTypeIDs;
 import net.thebub.privacyproxy.util.ServerConnection;
 import android.app.Activity;
 import android.content.Context;
@@ -19,7 +20,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,7 +29,7 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
-public class WebsiteDetails extends Activity {
+public class WebsiteDetailsActivity extends Activity {
 
 	private View mContentView;
 	private View mLoadingScreen;
@@ -44,9 +44,7 @@ public class WebsiteDetails extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_website_details);
-		// Show the Up button in the action bar.
-		setupActionBar();
-
+		
 		Intent intent = getIntent();
 		
 		mPreferences = getSharedPreferences("PrivacyProxyPreferences", Context.MODE_PRIVATE);
@@ -149,11 +147,11 @@ public class WebsiteDetails extends Activity {
 
 			WeblogEntry entry = this.websiteDetailsList.get(position);
 			
-			TextView desc = (TextView) convertView.findViewById(R.id.webdetails_desc);
+			TextView desc = (TextView) convertView.findViewById(R.id.weblogdetails_entry_desc);
 			desc.setText(entry.entry.getDescription());
-			TextView type = (TextView) convertView.findViewById(R.id.webdetails_type);
-			type.setText(entry.entry.getType().name());
-			TextView date = (TextView) convertView.findViewById(R.id.webdetails_date);
+			TextView type = (TextView) convertView.findViewById(R.id.weblogdetails_entry_type);
+			type.setText(getString(DataTypeIDs.getID(entry.entry.getType())));
+			TextView date = (TextView) convertView.findViewById(R.id.weblogdetails_entry_date);
 			date.setText(entry.date);
 			
 			return convertView;
@@ -166,12 +164,7 @@ public class WebsiteDetails extends Activity {
 		public PersonalDataEntry entry;
 	}
 
-	/**
-	 * Set up the {@link android.app.ActionBar}.
-	 */
-	private void setupActionBar() {
-		getActionBar().setDisplayHomeAsUpEnabled(true);
-	}
+	
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {

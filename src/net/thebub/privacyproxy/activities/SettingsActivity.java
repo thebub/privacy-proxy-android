@@ -7,19 +7,27 @@ import net.thebub.privacyproxy.PrivacyProxyAPI.APICommand;
 import net.thebub.privacyproxy.PrivacyProxyAPI.APIResponse;
 import net.thebub.privacyproxy.PrivacyProxyAPI.GetSettingsResponse;
 import net.thebub.privacyproxy.PrivacyProxyAPI.PersonalDataEntry;
+import net.thebub.privacyproxy.PrivacyProxyAPI.WebLogWebsitesResponse.WebLogWebsite;
 import net.thebub.privacyproxy.R;
+import net.thebub.privacyproxy.util.DataTypeIDs;
 import net.thebub.privacyproxy.util.ServerConnection;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
@@ -102,30 +110,21 @@ public class SettingsActivity extends Activity {
 			this.settingsItemList.addAll(settingsList);
 		}
 
-		private class ViewHolder {
-			TextView url;
-		}
-
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder holder = null;
 			if (convertView == null) {
 
 				LayoutInflater vi = (LayoutInflater) getSystemService(
 						Context.LAYOUT_INFLATER_SERVICE);
-				convertView = vi.inflate(R.layout.layout_weblog_entry, null);
-
-				holder = new ViewHolder();
-				holder.url = (TextView) convertView.findViewById(R.id.webloglist_entry_title);
-
-				convertView.setTag(holder);
-
-			} else {
-				holder = (ViewHolder) convertView.getTag();
+				convertView = vi.inflate(R.layout.layout_settings_entry, null);
 			}
-
+			
 			PersonalDataEntry setting = settingsItemList.get(position);
-			holder.url.setText(setting.getDescription());
+			
+			TextView title = (TextView) convertView.findViewById(R.id.settingslist_entry_title);
+			title.setText(setting.getDescription());
+			TextView type = (TextView) convertView.findViewById(R.id.settingslist_entry_type);
+			type.setText(getString(DataTypeIDs.getID(setting.getType())));
 
 			return convertView;
 
@@ -139,6 +138,23 @@ public class SettingsActivity extends Activity {
 		setContentView(R.layout.activity_settings);
 
 		this.mListView = (ListView) findViewById(R.id.settings_list_view);
+		this.mListView.setOnItemClickListener(new OnItemClickListener() {
+
+			@Override
+			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				PersonalDataEntry item = (PersonalDataEntry) parent.getAdapter().getItem(position);
+				
+				Intent openSettingDeatilsIntent = new Intent(parent.getContext(), SettingDetailActivity.class);
+				
+				openSettingDeatilsIntent.putExtra("settingID", item.getId());
+				openSettingDeatilsIntent.putExtra("settingDesc", item.getDescription());
+				openSettingDeatilsIntent.putExtra("settingType", getString(DataTypeIDs.getID(item.getType())));
+				openSettingDeatilsIntent.putExtra("settingData", item);
+				
+				startActivity(openSettingDeatilsIntent);
+			}
+			
+		});
 		
 		mPreferences = getSharedPreferences("PrivacyProxyPreferences", Context.MODE_PRIVATE); 
 
@@ -147,11 +163,35 @@ public class SettingsActivity extends Activity {
 		mSettingsTask = new GetSettingsTask();
 		mSettingsTask.execute();
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu_settingslist, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case R.id.settings_menu_add:
+	            newSetting();
+	            return true;
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 
 	private void displaySettings(ArrayList<PersonalDataEntry> entries) {
 		listAdapter = new SettingsListAdapter(this, R.layout.layout_weblog_entry, entries);
 
 		mListView.setAdapter(listAdapter);
 	}
-
+	
+	
+	private void newSetting() {
+		Intent openCreateSettingIntent = new Intent(this, SettingCreateActivity.class);
+				
+		startActivity(openCreateSettingIntent);
+	}
 }

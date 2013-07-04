@@ -38,7 +38,6 @@ public class ServerConnection {
 		this.serverSocket = new Socket(serverAddress, serverPort);
 	}
 	
-	@SuppressWarnings("unused")
 	private void disconnect() throws IOException {
 		if(serverSocket != null || serverSocket.isConnected()) {
 			this.serverSocket.close();
