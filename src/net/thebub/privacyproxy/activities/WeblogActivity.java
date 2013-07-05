@@ -16,6 +16,9 @@ import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,7 +32,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 public class WeblogActivity extends Activity {
 
 	public ListView mListView;
-	private WebLogListAdapter listAdapter;
+	private WebLogListAdapter mListAdapter;
 	private GetWeblogTask mWebLogTask;
 	
 	private SharedPreferences mPreferences;
@@ -95,39 +98,23 @@ public class WeblogActivity extends Activity {
 
 	private class WebLogListAdapter extends ArrayAdapter<WebLogWebsite> {
 
-		private ArrayList<WebLogWebsite> weblogItemList;
-
 		public WebLogListAdapter(Context context, int textViewResourceId, 
 				ArrayList<WebLogWebsite> countryList) {
 			super(context, textViewResourceId, countryList);
-			this.weblogItemList = new ArrayList<WebLogWebsite>();
-			this.weblogItemList.addAll(countryList);
-		}
-
-		private class ViewHolder {
-			TextView url;
 		}
 
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
-			ViewHolder holder = null;
 			if (convertView == null) {
 
 				LayoutInflater vi = (LayoutInflater) getSystemService(
 						Context.LAYOUT_INFLATER_SERVICE);
 				convertView = vi.inflate(R.layout.layout_weblog_entry, null);
-
-				holder = new ViewHolder();
-				holder.url = (TextView) convertView.findViewById(R.id.webloglist_entry_title);
-
-				convertView.setTag(holder);
-
-			} else {
-				holder = (ViewHolder) convertView.getTag();
 			}
 
-			WebLogWebsite website = weblogItemList.get(position);
-			holder.url.setText(website.getWebsite());
+			WebLogWebsite website = this.getItem(position);
+			TextView url = (TextView) convertView.findViewById(R.id.webloglist_entry_title);
+			url.setText(website.getWebsite());
 
 			return convertView;
 		}
@@ -139,6 +126,10 @@ public class WeblogActivity extends Activity {
 		setContentView(R.layout.activity_weblog);
 
 		mListView = (ListView) findViewById(R.id.weblog_list_view);
+		
+		mListAdapter = new WebLogListAdapter(this, R.layout.layout_weblog_entry, new ArrayList<WebLogWebsite>());
+		mListView.setAdapter(mListAdapter);
+		
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -162,11 +153,29 @@ public class WeblogActivity extends Activity {
 		mWebLogTask = new GetWeblogTask();
 		mWebLogTask.execute();
 	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu_weblog, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case R.id.weblog_menu_refresh:
+	        	mListAdapter.clear();
+	        	mWebLogTask = new GetWeblogTask();
+	        	mWebLogTask.execute();
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
+	}
 
 	private void displayWebLogList(ArrayList<WebLogWebsite> entries) {
-		listAdapter = new WebLogListAdapter(this, R.layout.layout_weblog_entry, entries);
-
-		mListView.setAdapter(listAdapter);
+		mListAdapter.clear();
+		mListAdapter.addAll(entries);
 	}
 
 }

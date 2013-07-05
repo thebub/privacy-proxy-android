@@ -60,7 +60,8 @@ public class SettingDetailActivity extends Activity {
 			mDeleteTask = null;
 			
 			if(success) {			
-				SettingDetailActivity.this.cancel();
+				SettingDetailActivity.this.setResult(RESULT_OK);
+				SettingDetailActivity.this.finish();
 			} else {
 				Toast failureToast = new Toast(SettingDetailActivity.this);			
 				failureToast.setText("Delete Failed");
@@ -133,6 +134,7 @@ public class SettingDetailActivity extends Activity {
 	}
 	
 	private void cancel() {
+		setResult(RESULT_CANCELED);
 		finish();
 	}
 

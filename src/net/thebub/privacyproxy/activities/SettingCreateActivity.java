@@ -34,8 +34,14 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 	private Spinner mType = null;
 	
 	private TableRow mCreditcardRow = null;
+	private EditText mCreditcardField = null;
+	
 	private TableRow mEmailRow = null;
+	private EditText mEmailField = null;
+	
 	private TableRow mDateRow = null;
+	private EditText mDateField = null;
+	
 	
 	private class CreateSettingTask extends AsyncTask<PersonalDataEntry, Void, Boolean> {
 		
@@ -69,7 +75,8 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 			mCreateTask = null;
 			
 			if(success) {			
-				SettingCreateActivity.this.cancel();
+				SettingCreateActivity.this.setResult(RESULT_OK);
+				SettingCreateActivity.this.finish();
 			} else {
 				Toast failureToast = new Toast(SettingCreateActivity.this);			
 				failureToast.setText("Creation Failed");
@@ -101,8 +108,13 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 		mDescription = (EditText) findViewById(R.id.setting_create_desc);
 				
 		mCreditcardRow = (TableRow) findViewById(R.id.setting_create_creditcard);
+		mCreditcardField = (EditText) findViewById(R.id.setting_create_creditcard_creditcard);
+		
 		mEmailRow = (TableRow) findViewById(R.id.setting_create_email);
+		mEmailField = (EditText) findViewById(R.id.setting_create_email_email);
+		
 		mDateRow = (TableRow) findViewById(R.id.setting_create_date);
+		mDateField = (EditText) findViewById(R.id.setting_create_date_date);
 		
 		mType = (Spinner) findViewById(R.id.setting_create_type);
 		// Create an ArrayAdapter using the string array and a default spinner layout
@@ -138,21 +150,23 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 		
 		dataBuilder.setDescription(mDescription.getText().toString());
 		
-		if(((String) mType.getSelectedItem()).equalsIgnoreCase("creditcard")) {
+		if(((String) mType.getSelectedItem()).equalsIgnoreCase("credit card")) {
 			dataBuilder.setType(PersonalDataTypes.creditcard);
+			dataBuilder.setHash(mCreditcardField.getText().toString());
 		} else if(((String) mType.getSelectedItem()).equalsIgnoreCase("email")) {
 			dataBuilder.setType(PersonalDataTypes.email);
+			dataBuilder.setHash(mEmailField.getText().toString());
 		} else if(((String) mType.getSelectedItem()).equalsIgnoreCase("date")) {
 			dataBuilder.setType(PersonalDataTypes.date);
+			dataBuilder.setHash(mDateField.getText().toString());
 		}
-		
-		dataBuilder.setHash("test");
-				
+						
 		mCreateTask = new CreateSettingTask();
 		mCreateTask.execute(dataBuilder.build());
 	}
 	
 	private void cancel() {
+		setResult(RESULT_CANCELED);
 		finish();
 	}
 
@@ -171,7 +185,7 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 			long id) {
 		String selectedItem = (String) parent.getItemAtPosition(pos);
 		
-		if(selectedItem.equalsIgnoreCase("Creditcard")) {
+		if(selectedItem.equalsIgnoreCase("Credit card")) {
 			mCreditcardRow.setVisibility(View.VISIBLE);
 			mEmailRow.setVisibility(View.GONE);
 			mDateRow.setVisibility(View.GONE);

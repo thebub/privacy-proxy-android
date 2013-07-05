@@ -16,6 +16,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,7 +34,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 public class SettingsActivity extends Activity {
 
 	public ListView mListView;
-	private SettingsListAdapter listAdapter;
+	private SettingsListAdapter mListAdapter;
 	private GetSettingsTask mSettingsTask;
 	
 	private SharedPreferences mPreferences;
@@ -100,13 +101,9 @@ public class SettingsActivity extends Activity {
 
 	private class SettingsListAdapter extends ArrayAdapter<PersonalDataEntry> {
 
-		private ArrayList<PersonalDataEntry> settingsItemList;
-
 		public SettingsListAdapter(Context context, int textViewResourceId, 
 				ArrayList<PersonalDataEntry> settingsList) {
 			super(context, textViewResourceId, settingsList);
-			this.settingsItemList = new ArrayList<PersonalDataEntry>();
-			this.settingsItemList.addAll(settingsList);
 		}
 
 		@Override
@@ -118,7 +115,7 @@ public class SettingsActivity extends Activity {
 				convertView = vi.inflate(R.layout.layout_settings_entry, null);
 			}
 			
-			PersonalDataEntry setting = settingsItemList.get(position);
+			PersonalDataEntry setting = this.getItem(position);
 			
 			TextView title = (TextView) convertView.findViewById(R.id.settingslist_entry_title);
 			title.setText(setting.getDescription());
@@ -137,6 +134,11 @@ public class SettingsActivity extends Activity {
 		setContentView(R.layout.activity_settings);
 
 		this.mListView = (ListView) findViewById(R.id.settings_list_view);
+		
+		mListAdapter = new SettingsListAdapter(this, R.layout.layout_weblog_entry, new ArrayList<PersonalDataEntry>());
+
+		mListView.setAdapter(mListAdapter);
+		
 		this.mListView.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override
@@ -150,7 +152,7 @@ public class SettingsActivity extends Activity {
 				openSettingDeatilsIntent.putExtra("settingType", getString(DataTypeIDs.getID(item.getType())));
 				openSettingDeatilsIntent.putExtra("settingData", item);
 				
-				startActivity(openSettingDeatilsIntent);
+				startActivityForResult(openSettingDeatilsIntent, 0);
 			}
 			
 		});
@@ -161,6 +163,16 @@ public class SettingsActivity extends Activity {
 		
 		mSettingsTask = new GetSettingsTask();
 		mSettingsTask.execute();
+	}
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+	    if (resultCode == RESULT_OK) {
+	        Log.d("SETTINGS", "Child returned: ok");
+	        mListAdapter.clear();
+	        mSettingsTask = new GetSettingsTask();
+	        mSettingsTask.execute();
+	    }
 	}
 	
 	@Override
@@ -176,21 +188,24 @@ public class SettingsActivity extends Activity {
 	        case R.id.settings_menu_add:
 	            newSetting();
 	            return true;
+	        case R.id.settings_menu_refresh:
+	        	mListAdapter.clear();
+	        	mSettingsTask = new GetSettingsTask();
+	        	mSettingsTask.execute();
 	        default:
 	            return super.onOptionsItemSelected(item);
 	    }
 	}
 
 	private void displaySettings(ArrayList<PersonalDataEntry> entries) {
-		listAdapter = new SettingsListAdapter(this, R.layout.layout_weblog_entry, entries);
-
-		mListView.setAdapter(listAdapter);
+		mListAdapter.clear();
+		mListAdapter.addAll(entries);
 	}
 	
 	
 	private void newSetting() {
 		Intent openCreateSettingIntent = new Intent(this, SettingCreateActivity.class);
 				
-		startActivity(openCreateSettingIntent);
+		startActivityForResult(openCreateSettingIntent, 0);
 	}
 }

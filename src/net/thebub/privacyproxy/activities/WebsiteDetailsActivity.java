@@ -18,8 +18,9 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,10 +36,11 @@ public class WebsiteDetailsActivity extends Activity {
 	private View mLoadingScreen;
 	
 	private ListView mDetailsList;
-	private WebsiteDetailsListAdapter listAdapter;
+	private WebsiteDetailsListAdapter mListAdapter;
 	private GetWebsiteDetailsTask mWebDetailsTask;
 	
 	private SharedPreferences mPreferences;
+	private Integer mWebsiteID;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,15 +55,36 @@ public class WebsiteDetailsActivity extends Activity {
 		mLoadingScreen = findViewById(R.id.webdetails_status);
 		
 		mDetailsList = (ListView) findViewById(R.id.website_details_list);
+		mListAdapter = new WebsiteDetailsListAdapter(this, R.layout.layout_webdetails_entry, new ArrayList<WebsiteDetailsActivity.WeblogEntry>());
+		mDetailsList.setAdapter(mListAdapter);
 		
 		TextView website = (TextView) findViewById(R.id.website_details_website);
 		website.setText(intent.getStringExtra("websiteName"));		
 		
-		Integer websiteID = intent.getIntExtra("websiteID",-1);
-		if(websiteID != -1) {
+		mWebsiteID = intent.getIntExtra("websiteID",-1);
+		if(mWebsiteID != -1) {
 			mWebDetailsTask = new GetWebsiteDetailsTask();
-			mWebDetailsTask.execute(websiteID);
+			mWebDetailsTask.execute(mWebsiteID);
 		}
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+	    MenuInflater inflater = getMenuInflater();
+	    inflater.inflate(R.menu.menu_webdetails, menu);
+	    return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+	    switch (item.getItemId()) {
+	        case R.id.website_details_menu_refresh:
+	        	mListAdapter.clear();
+	        	mWebDetailsTask = new GetWebsiteDetailsTask();
+	        	mWebDetailsTask.execute(mWebsiteID);
+	        default:
+	            return super.onOptionsItemSelected(item);
+	    }
 	}
 
 	private class GetWebsiteDetailsTask extends AsyncTask<Integer, Void, List<WebLogWebsiteData>> {
@@ -163,20 +186,10 @@ public class WebsiteDetailsActivity extends Activity {
 		public String date;
 		public PersonalDataEntry entry;
 	}
-
-	
-
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		switch (item.getItemId()) {
-		case android.R.id.home:
-			NavUtils.navigateUpFromSameTask(this);
-			return true;
-		}
-		return super.onOptionsItemSelected(item);
-	}
 	
 	private void displayWebsiteData(List<WebLogWebsiteData> data) {
+		mListAdapter.clear();
+		
 		ArrayList<WeblogEntry> list = new ArrayList<WeblogEntry>();
 		
 		for (WebLogWebsiteData dateEntry : data) {
@@ -191,9 +204,7 @@ public class WebsiteDetailsActivity extends Activity {
 			}
 		}
 		
-		listAdapter = new WebsiteDetailsListAdapter(this, R.layout.layout_webdetails_entry, list);
-
-		mDetailsList.setAdapter(listAdapter);
+		mListAdapter.addAll(list);
 	}
 
 }

@@ -4,7 +4,7 @@
     <string name="app_name">Privacy Proxy</string>
     <string name="pref_username">PREF_USERNAME</string>
     <string name="pref_session_id">PREF_SESSION_ID</string>
-    <string name="datatype_creditcard">Creditcard</string>
+    <string name="datatype_creditcard">Credit Card</string>
     <string name="datatype_date">Date</string>
     <string name="datatype_email">Email</string>
     <string name="action_settings">Settings</string>
@@ -19,18 +19,21 @@
     <string name="menu_logout">Logout</string>
     <string name="menu_logout_desc">Sign off your account</string>
     <string name="weblog_title">Privacy Weblog</string>
+    <string name="weblog_menu_refresh">Refresh</string>
     <string name="weblog_intro">Your visited websites:</string>
     <string name="weblog_status_message">Loading Weblog&#8230;</string>
     <string name="weblog_description">DESCRIPTION</string>
-    <string name="setting_detail_title">Setting Details</string>
     <string name="website_details_website_label">Website:</string>
     <string name="website_details_loading">Loading Website Details&#8230;</string>
     <string name="website_details_list_label">Collected personal data:</string>
+    <string name="website_details_menu_refresh">Refresh</string>
     <string name="settings_title">Settings</string>
     <string name="settings_status_message">Loading Settings&#8230;</string>
     <string name="settings_description">DESCRIPTION</string>
     <string name="settings_intro">Your settings:</string>
     <string name="settings_menu_add">New setting</string>
+	<string name="settings_menu_refresh">Refresh</string>
+    <string name="setting_detail_title">Setting Details</string>
     <string name="setting_detail_desc">Description:</string>
     <string name="setting_detail_type">Type:</string>
     <string name="setting_detail_delete">Delete Setting</string>
@@ -39,9 +42,12 @@
     <string name="setting_create_create">Create Setting</string>
     <string name="setting_create_cancel">Cancel</string>
     <string-array name="setting_create_types">
-        <item >Creditcard</item>
+        <item >Credit Card</item>
         <item >Date</item>
         <item >Email</item>
     </string-array>
+	<string name="setting_create_creditcard_label">Creadit Card:</string>
+	<string name="setting_create_date_label">Date:</string>
+	<string name="setting_create_email_label">Email:</string>
 
 </resources>
