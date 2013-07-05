@@ -7,7 +7,6 @@ import net.thebub.privacyproxy.PrivacyProxyAPI.APICommand;
 import net.thebub.privacyproxy.PrivacyProxyAPI.APIResponse;
 import net.thebub.privacyproxy.PrivacyProxyAPI.GetSettingsResponse;
 import net.thebub.privacyproxy.PrivacyProxyAPI.PersonalDataEntry;
-import net.thebub.privacyproxy.PrivacyProxyAPI.WebLogWebsitesResponse.WebLogWebsite;
 import net.thebub.privacyproxy.R;
 import net.thebub.privacyproxy.util.DataTypeIDs;
 import net.thebub.privacyproxy.util.ServerConnection;
@@ -24,10 +23,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 

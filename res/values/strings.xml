@@ -22,20 +22,26 @@
     <string name="weblog_intro">Your visited websites:</string>
     <string name="weblog_status_message">Loading Weblog&#8230;</string>
     <string name="weblog_description">DESCRIPTION</string>
-    <string name="settings_title">Settings</string>
-    <string name="settings_status_message">Loading Settings&#8230;</string>
-    <string name="settings_description">DESCRIPTION</string>
-    <string name="setting_detail_desc">Description:</string>
-    <string name="setting_detail_type">Type:</string>
+    <string name="setting_detail_title">Setting Details</string>
     <string name="website_details_website_label">Website:</string>
     <string name="website_details_loading">Loading Website Details&#8230;</string>
     <string name="website_details_list_label">Collected personal data:</string>
+    <string name="settings_title">Settings</string>
+    <string name="settings_status_message">Loading Settings&#8230;</string>
+    <string name="settings_description">DESCRIPTION</string>
     <string name="settings_intro">Your settings:</string>
     <string name="settings_menu_add">New setting</string>
-    <string name="title_activity_setting_detail">SettingDetailActivity</string>
-    <string name="hello_world">Hello world!</string>
-    <string name="title_activity_setting_create">SettingCreateActivity</string>
+    <string name="setting_detail_desc">Description:</string>
+    <string name="setting_detail_type">Type:</string>
     <string name="setting_detail_delete">Delete Setting</string>
     <string name="setting_detail_cancel">Cancel</string>
+    <string name="setting_create_title">Create Setting</string>
+    <string name="setting_create_create">Create Setting</string>
+    <string name="setting_create_cancel">Cancel</string>
+    <string-array name="setting_create_types">
+        <item >Creditcard</item>
+        <item >Date</item>
+        <item >Email</item>
+    </string-array>
 
 </resources>

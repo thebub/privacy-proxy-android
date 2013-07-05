@@ -57,7 +57,15 @@
         </activity>
         <activity
             android:name="net.thebub.privacyproxy.activities.SettingDetailActivity"
-            android:label="@string/title_activity_setting_detail"
+            android:label="@string/setting_detail_title"
+            android:parentActivityName="net.thebub.privacyproxy.activities.SettingsActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="net.thebub.privacyproxy.activities.SettingsActivity" />
+        </activity>
+        <activity
+            android:name="net.thebub.privacyproxy.activities.SettingCreateActivity"
+            android:label="@string/setting_create_title"
             android:parentActivityName="net.thebub.privacyproxy.activities.SettingsActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

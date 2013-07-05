@@ -12,10 +12,10 @@ public class DataTypeIDs {
 			returnValue = net.thebub.privacyproxy.R.string.datatype_creditcard;
 			break;
 		case date:
-			returnValue = net.thebub.privacyproxy.R.string.datatype_creditcard;
+			returnValue = net.thebub.privacyproxy.R.string.datatype_date;
 			break;
 		case email:
-			returnValue = net.thebub.privacyproxy.R.string.datatype_creditcard;
+			returnValue = net.thebub.privacyproxy.R.string.datatype_email;
 			break;
 		default:
 			break;
