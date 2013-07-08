@@ -30,6 +30,11 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
+/**
+ * This activity will show the list of stored data for a certain webpage
+ * @author dbub
+ *
+ */
 public class WebsiteDetailsActivity extends Activity {
 
 	private View mContentView;
@@ -49,6 +54,7 @@ public class WebsiteDetailsActivity extends Activity {
 		
 		Intent intent = getIntent();
 		
+		// Load the prefreences to get the session ID
 		mPreferences = getSharedPreferences("PrivacyProxyPreferences", Context.MODE_PRIVATE);
 		
 		mContentView = findViewById(R.id.webdetails_data_view);
@@ -70,6 +76,7 @@ public class WebsiteDetailsActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		// Set up the menu
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.menu_webdetails, menu);
 	    return true;
@@ -79,6 +86,7 @@ public class WebsiteDetailsActivity extends Activity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 	    switch (item.getItemId()) {
 	        case R.id.website_details_menu_refresh:
+	        	// Refresh the list of stored data of the webpage
 	        	mListAdapter.clear();
 	        	mWebDetailsTask = new GetWebsiteDetailsTask();
 	        	mWebDetailsTask.execute(mWebsiteID);
@@ -87,6 +95,11 @@ public class WebsiteDetailsActivity extends Activity {
 	    }
 	}
 
+	/**
+	 * This task will load the list of private data stored for the current webpage
+	 * @author dbub
+	 *
+	 */
 	private class GetWebsiteDetailsTask extends AsyncTask<Integer, Void, List<WebLogWebsiteData>> {
 
 		@Override
@@ -100,22 +113,27 @@ public class WebsiteDetailsActivity extends Activity {
 		@Override
 		protected List<WebLogWebsiteData> doInBackground(Integer... websiteIDs) {
 
+			// Get the ID of the webpage
 			Integer websiteID = websiteIDs[0];
 			
+			// Get the connection instance
 			ServerConnection connection = ServerConnection.getInstance();
 			
+			// Build the request with the ID of the webpage
 			WebLogWebsiteDataRequest.Builder requestBuilder = WebLogWebsiteDataRequest.newBuilder();
 			
 			requestBuilder.setId(websiteID);
 
 			String sessionID = mPreferences.getString(getString(R.string.pref_session_id), "");
 
+			// Send the request and wait for the response
 			APIResponse response = connection.sendRequest(APICommand.getWebpageData,sessionID,requestBuilder.build().toByteString());
 
 			if(response == null || !response.getSuccess()) {
 				return null;
 			}
 
+			// Parse the list of website data from the response
 			WebLogWebsiteDataResponse websiteDataResponse;
 			try {
 				websiteDataResponse = WebLogWebsiteDataResponse.parseFrom(response.getData());
@@ -149,6 +167,11 @@ public class WebsiteDetailsActivity extends Activity {
 		}
 	}
 	
+	/**
+	 * This list adapter will show all data entries for the current webpage
+	 * @author dbub
+	 *
+	 */
 	private class WebsiteDetailsListAdapter extends ArrayAdapter<WeblogEntry> {
 
 		private ArrayList<WeblogEntry> websiteDetailsList;
@@ -163,13 +186,16 @@ public class WebsiteDetailsActivity extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null) {
+				// Load the layout
 				LayoutInflater vi = (LayoutInflater) getSystemService(
 						Context.LAYOUT_INFLATER_SERVICE);
 				convertView = vi.inflate(R.layout.layout_webdetails_entry, null);
 			}
 
+			// Get the urrent entry
 			WeblogEntry entry = this.websiteDetailsList.get(position);
 			
+			// Fill all fields with the corresponding data
 			TextView desc = (TextView) convertView.findViewById(R.id.weblogdetails_entry_desc);
 			desc.setText(entry.entry.getDescription());
 			TextView type = (TextView) convertView.findViewById(R.id.weblogdetails_entry_type);

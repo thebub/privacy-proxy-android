@@ -22,21 +22,28 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+/**
+ * This class represents the start screen of the app. It provides links to the activities of the app.
+ * @author dbub
+ *
+ */
 public class MenuActivity extends Activity {
-	
+
 	private SharedPreferences mPreferences;
-	
+
 	private ListView mListView;
-	
+
 	private LogoutTask mLogoutTask;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_menu);
-		
+
+		// Get the preferences
 		mPreferences = getSharedPreferences("PrivacyProxyPreferences", Context.MODE_PRIVATE);
-		
+
+		// Get the list view and add click handling to it
 		mListView = (ListView) findViewById(R.id.menu_list);
 		mListView.setOnItemClickListener(new OnItemClickListener() {
 
@@ -44,34 +51,39 @@ public class MenuActivity extends Activity {
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
 				Intent menuActionIntent = null;
 				Boolean execute = true;
-				
+
 				switch (position) {
 				case 0:
+					// Set the Weblog activity as the target of the intent
 					menuActionIntent = new Intent(parent.getContext(), WeblogActivity.class);
 					break;
 				case 1:
+					// Set the Setting activity as the target of the inten
 					menuActionIntent = new Intent(parent.getContext(), SettingsActivity.class);
 					break;
 				case 2:
+					// Start the logout task, to destroy the users session
 					mLogoutTask = new LogoutTask();
 					mLogoutTask.execute();
 					execute = false;
 					break;
 				}
-				
+
 				if(execute){
+					// Start the target activity
 					startActivity(menuActionIntent);
 				}
 			}
-			
+
 		});
-		
+
+		// Create  and populate the list of elements in the menu
 		ArrayList<String> menuEntries = new ArrayList<String>();
-		
+
 		menuEntries.add(getString(R.string.menu_weblog));
 		menuEntries.add(getString(R.string.menu_settings));
 		menuEntries.add(getString(R.string.menu_logout));
-		
+
 		mListView.setAdapter(new MenuListAdapter(this, R.layout.layout_weblog_entry, menuEntries));
 	}
 
@@ -79,15 +91,23 @@ public class MenuActivity extends Activity {
 	public boolean onCreateOptionsMenu(Menu menu) {
 		return true;
 	}
-	
+
+	/**
+	 * Show the login screen after successful logout
+	 */
 	protected void showLogin() {
 		Intent menuActionIntent = new Intent(MenuActivity.this, LoginActivity.class);
-		
+
 		menuActionIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
-		
+
 		startActivity(menuActionIntent);		
 	}
-	
+
+	/**
+	 * The ArrayAdapter, which fills the menu list with the list items
+	 * @author dbub
+	 *
+	 */
 	private class MenuListAdapter extends ArrayAdapter<String> {
 
 		private ArrayList<String> menuItemList;
@@ -108,6 +128,7 @@ public class MenuActivity extends Activity {
 			ViewHolder holder = null;
 			if (convertView == null) {
 
+				// Get the layout for the list items
 				LayoutInflater vi = (LayoutInflater) getSystemService(
 						Context.LAYOUT_INFLATER_SERVICE);
 				convertView = vi.inflate(R.layout.layout_weblog_entry, null);
@@ -121,6 +142,7 @@ public class MenuActivity extends Activity {
 				holder = (ViewHolder) convertView.getTag();
 			}
 
+			// Set the item title in the menu-entry
 			String menuEntry = menuItemList.get(position);
 			holder.url.setText(menuEntry);
 
@@ -128,9 +150,14 @@ public class MenuActivity extends Activity {
 		}
 
 	}
-	
-private class LogoutTask extends AsyncTask<Void, Void, Boolean> {
-		
+
+	/**
+	 * The logout implementation of the AsyncTask
+	 * @author dbub
+	 *
+	 */
+	private class LogoutTask extends AsyncTask<Void, Void, Boolean> {
+
 		@Override
 		protected void onPreExecute() {
 			super.onPreExecute();
@@ -139,12 +166,16 @@ private class LogoutTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected Boolean doInBackground(Void... none) {
 
+			// Get server connection instance
 			ServerConnection connection = ServerConnection.getInstance();
 
+			// Get the session key out of the preferences
 			String sessionID = mPreferences.getString(getString(R.string.pref_session_id), "");
-			
+
+			// Send request and receive response
 			APIResponse response = connection.sendRequest(APICommand.logout,sessionID);
 
+			// Return success status
 			if(response == null || !response.getSuccess()) {
 				return false;
 			}
@@ -155,8 +186,9 @@ private class LogoutTask extends AsyncTask<Void, Void, Boolean> {
 		@Override
 		protected void onPostExecute(final Boolean data) {
 			mLogoutTask = null;
-			
-			if (data) {				
+
+			if (data) {	
+				// Show login screen on successful logout
 				showLogin();
 			}
 		}

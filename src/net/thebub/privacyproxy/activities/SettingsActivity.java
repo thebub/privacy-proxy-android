@@ -31,6 +31,11 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
+/**
+ * This activity displays a list of existing settings of the user.
+ * @author dbub
+ *
+ */
 public class SettingsActivity extends Activity {
 
 	public ListView mListView;
@@ -40,7 +45,11 @@ public class SettingsActivity extends Activity {
 	private SharedPreferences mPreferences;
 	private View mLoadingScreen;
 
-
+	/**
+	 * The get settings task, is used to acquire a list of existing settings
+	 * @author dbub
+	 *
+	 */
 	private class GetSettingsTask extends AsyncTask<Void, Void, List<PersonalDataEntry>> {
 		
 		@Override
@@ -53,11 +62,12 @@ public class SettingsActivity extends Activity {
 		
 		@Override
 		protected List<PersonalDataEntry> doInBackground(Void... none) {
-
+			// Get the connection instance
 			ServerConnection connection = ServerConnection.getInstance();
 
 			String sessionID = mPreferences.getString(getString(R.string.pref_session_id), "");
 			
+			// Send the request and wait for the list of settings
 			APIResponse response = connection.sendRequest(APICommand.getSettings,sessionID);
 
 			if(response == null || !response.getSuccess()) {
@@ -78,10 +88,12 @@ public class SettingsActivity extends Activity {
 		@Override
 		protected void onPostExecute(final List<PersonalDataEntry> data) {
 			mSettingsTask = null;
-
+			
+			// Build the list of settings out of the response
 			ArrayList<PersonalDataEntry> dataArray = new ArrayList<PersonalDataEntry>(data);
 			
-			if (data != null) {				
+			if (data != null) {
+				// Show the setting list and hide the loading spinner
 				displaySettings(dataArray);
 				mLoadingScreen.setVisibility(View.GONE);
 				mListView.setVisibility(View.VISIBLE);
@@ -99,6 +111,11 @@ public class SettingsActivity extends Activity {
 		}
 	}
 
+	/**
+	 * This list adapter creates displays the list of settings in the listview
+	 * @author dbub
+	 *
+	 */
 	private class SettingsListAdapter extends ArrayAdapter<PersonalDataEntry> {
 
 		public SettingsListAdapter(Context context, int textViewResourceId, 
@@ -109,14 +126,16 @@ public class SettingsActivity extends Activity {
 		@Override
 		public View getView(int position, View convertView, ViewGroup parent) {
 			if (convertView == null) {
-
+				// Load the layout for ech entry
 				LayoutInflater vi = (LayoutInflater) getSystemService(
 						Context.LAYOUT_INFLATER_SERVICE);
 				convertView = vi.inflate(R.layout.layout_settings_entry, null);
 			}
 			
+			// Get the setting fpr the current position
 			PersonalDataEntry setting = this.getItem(position);
 			
+			// Fill all field of the setting entry with the corresponding data
 			TextView title = (TextView) convertView.findViewById(R.id.settingslist_entry_title);
 			title.setText(setting.getDescription());
 			TextView type = (TextView) convertView.findViewById(R.id.settingslist_entry_type);
@@ -143,6 +162,7 @@ public class SettingsActivity extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				// When a list elemet is clicked open the details activity and pass the data of the entry over
 				PersonalDataEntry item = (PersonalDataEntry) parent.getAdapter().getItem(position);
 				
 				Intent openSettingDeatilsIntent = new Intent(parent.getContext(), SettingDetailActivity.class);
@@ -167,6 +187,7 @@ public class SettingsActivity extends Activity {
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// Evaluate the result of the create or detail activity and refresh the list if the activities were successful
 	    if (resultCode == RESULT_OK) {
 	        Log.d("SETTINGS", "Child returned: ok");
 	        mListAdapter.clear();
@@ -177,6 +198,7 @@ public class SettingsActivity extends Activity {
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
+		// Load the menu and fill it
 	    MenuInflater inflater = getMenuInflater();
 	    inflater.inflate(R.menu.menu_settingslist, menu);
 	    return true;
@@ -184,11 +206,14 @@ public class SettingsActivity extends Activity {
 	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
+		// Check which menu entry was selected
 	    switch (item.getItemId()) {
 	        case R.id.settings_menu_add:
+	        	// Open the new setting activity
 	            newSetting();
 	            return true;
 	        case R.id.settings_menu_refresh:
+	        	// Refresh the list of settings
 	        	mListAdapter.clear();
 	        	mSettingsTask = new GetSettingsTask();
 	        	mSettingsTask.execute();
@@ -198,12 +223,14 @@ public class SettingsActivity extends Activity {
 	}
 
 	private void displaySettings(ArrayList<PersonalDataEntry> entries) {
+		// Clear the previous entries and fill with 
 		mListAdapter.clear();
 		mListAdapter.addAll(entries);
 	}
 	
 	
 	private void newSetting() {
+		// Open the new setting activity
 		Intent openCreateSettingIntent = new Intent(this, SettingCreateActivity.class);
 				
 		startActivityForResult(openCreateSettingIntent, 0);

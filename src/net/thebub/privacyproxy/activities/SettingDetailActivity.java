@@ -21,6 +21,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+/**
+ * This class wraps the details activity of a setting. It enables setting deletion.
+ * @author dbub
+ *
+ */
 public class SettingDetailActivity extends Activity {
 	
 	private PersonalDataEntry mData = null;
@@ -28,6 +33,11 @@ public class SettingDetailActivity extends Activity {
 	
 	private DeleteSettingTask mDeleteTask = null;
 
+	/**
+	 * This implementation of the AsyncTask, which will delete a setting.
+	 * @author dbub
+	 *
+	 */
 	private class DeleteSettingTask extends AsyncTask<Void, Void, Boolean> {
 	
 		@Override
@@ -37,8 +47,11 @@ public class SettingDetailActivity extends Activity {
 	
 		@Override
 		protected Boolean doInBackground(Void... data) {
+			
+			// Get the server connection instance
 			ServerConnection connection = ServerConnection.getInstance();
 			
+			// Create a request builder and construct the request
 			UpdateSettingRequest.Builder requestBuilder = UpdateSettingRequest.newBuilder();
 			
 			requestBuilder.setAction(SettingAction.delete);
@@ -59,6 +72,7 @@ public class SettingDetailActivity extends Activity {
 		protected void onPostExecute(final Boolean success) {
 			mDeleteTask = null;
 			
+			// Close activity on success, show a toats otheriwse
 			if(success) {			
 				SettingDetailActivity.this.setResult(RESULT_OK);
 				SettingDetailActivity.this.finish();
@@ -104,6 +118,7 @@ public class SettingDetailActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				// Delete the setting on click of this button
 				delete();				
 			}
 		});
@@ -113,6 +128,7 @@ public class SettingDetailActivity extends Activity {
 			
 			@Override
 			public void onClick(View v) {
+				// Return to the settings menu, since user canceled the operation
 				cancel();
 			}
 		});
@@ -129,11 +145,13 @@ public class SettingDetailActivity extends Activity {
 	}
 	
 	private void delete() {
+		// Start the delete activity
 		mDeleteTask = new DeleteSettingTask();
 		mDeleteTask.execute();
 	}
 	
 	private void cancel() {
+		// Return to settings menu
 		setResult(RESULT_CANCELED);
 		finish();
 	}

@@ -2,8 +2,18 @@ package net.thebub.privacyproxy.util;
 
 import net.thebub.privacyproxy.PrivacyProxyAPI.PersonalDataTypes;
 
+/**
+ * This class provides a mapping of the PersonalDataTaypes to the string identifiers
+ * @author dbub
+ *
+ */
 public class DataTypeIDs {
 
+	/**
+	 * Return the string identifier for the given PersonalDataTypes
+	 * @param type 
+	 * @return The string identifier
+	 */
 	public static int getID(PersonalDataTypes type) {		
 		int returnValue = 0;
 		
