@@ -25,6 +25,11 @@ import android.widget.Spinner;
 import android.widget.TableRow;
 import android.widget.Toast;
 
+/**
+ * Class implementing the create new setting activity
+ * @author dbub
+ *
+ */
 public class SettingCreateActivity extends Activity implements OnItemSelectedListener {
 		
 	private SharedPreferences mPreferences;
@@ -43,6 +48,11 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 	private EditText mDateField = null;
 	
 	
+	/**
+	 * This is the implementation of AsyncTask, whch will create a new setting on the server
+	 * @author dbub
+	 *
+	 */
 	private class CreateSettingTask extends AsyncTask<PersonalDataEntry, Void, Boolean> {
 		
 		@Override
@@ -52,8 +62,10 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 	
 		@Override
 		protected Boolean doInBackground(PersonalDataEntry... data) {
+			// Get connection instance
 			ServerConnection connection = ServerConnection.getInstance();
 			
+			// Get a new request builder and build the request
 			UpdateSettingRequest.Builder requestBuilder = UpdateSettingRequest.newBuilder();
 			
 			requestBuilder.setAction(SettingAction.create);
@@ -61,6 +73,7 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 	
 			String sessionID = mPreferences.getString(getString(R.string.pref_session_id), "");
 	
+			// Send the request and wait for the response
 			APIResponse response = connection.sendRequest(APICommand.updateSetting,sessionID,requestBuilder.build().toByteString());
 	
 			if(response != null) {
@@ -74,10 +87,12 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 		protected void onPostExecute(final Boolean success) {
 			mCreateTask = null;
 			
-			if(success) {			
+			if(success) {
+				// Indicate the success of the operation and finish activity with result
 				SettingCreateActivity.this.setResult(RESULT_OK);
 				SettingCreateActivity.this.finish();
 			} else {
+				// Show a toast, that the operation was unsuccessful
 				Toast failureToast = new Toast(SettingCreateActivity.this);			
 				failureToast.setText("Creation Failed");
 				failureToast.setDuration(Toast.LENGTH_LONG);
@@ -131,6 +146,7 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 			
 			@Override
 			public void onClick(View v) {
+				// Use the supplied data to create the setting
 				create();
 			}
 		});
@@ -140,16 +156,21 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 			
 			@Override
 			public void onClick(View v) {
+				// Setting creation should be aborted. Return to menu
 				cancel();
 			}
 		});
 	}
 	
+	/**
+	 * Read the fields and prepare the create setting request
+	 */
 	private void create() {
 		net.thebub.privacyproxy.PrivacyProxyAPI.PersonalDataEntry.Builder dataBuilder = PersonalDataEntry.newBuilder();
 		
 		dataBuilder.setDescription(mDescription.getText().toString());
 		
+		// Determine the type of setting which is selected and set the fields in the request
 		if(((String) mType.getSelectedItem()).equalsIgnoreCase("credit card")) {
 			dataBuilder.setType(PersonalDataTypes.creditcard);
 			dataBuilder.setHash(mCreditcardField.getText().toString());
@@ -161,10 +182,12 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 			dataBuilder.setHash(mDateField.getText().toString());
 		}
 						
+		// Execute the create setting activity
 		mCreateTask = new CreateSettingTask();
 		mCreateTask.execute(dataBuilder.build());
 	}
 	
+	// Close the activity and indicate that the process was canceled
 	private void cancel() {
 		setResult(RESULT_CANCELED);
 		finish();
@@ -185,6 +208,7 @@ public class SettingCreateActivity extends Activity implements OnItemSelectedLis
 			long id) {
 		String selectedItem = (String) parent.getItemAtPosition(pos);
 		
+		// Determine the currently selected element and show the corresponding fields
 		if(selectedItem.equalsIgnoreCase("Credit card")) {
 			mCreditcardRow.setVisibility(View.VISIBLE);
 			mEmailRow.setVisibility(View.GONE);

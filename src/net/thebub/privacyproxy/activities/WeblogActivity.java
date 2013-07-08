@@ -29,6 +29,11 @@ import android.widget.TextView;
 
 import com.google.protobuf.InvalidProtocolBufferException;
 
+/**
+ * This activity displays the list of visited webpages
+ * @author dbub
+ *
+ */
 public class WeblogActivity extends Activity {
 
 	public ListView mListView;
@@ -38,6 +43,11 @@ public class WeblogActivity extends Activity {
 	private SharedPreferences mPreferences;
 	private View mLoadingScreen;
 
+	/**
+	 * This AsyncTask will load the list of visited webpages
+	 * @author dbub
+	 *
+	 */
 	private class GetWeblogTask extends AsyncTask<Void, Void, List<WebLogWebsite>> {
 		
 		@Override
@@ -50,17 +60,19 @@ public class WeblogActivity extends Activity {
 
 		@Override
 		protected List<WebLogWebsite> doInBackground(Void... none) {
-
+			// Get the connection instance
 			ServerConnection connection = ServerConnection.getInstance();
 
 			String sessionID = mPreferences.getString(getString(R.string.pref_session_id), "");
 			
+			// Send the request with the sessionID and wait for response
 			APIResponse response = connection.sendRequest(APICommand.getWebpages,sessionID);
 
 			if(response == null || !response.getSuccess()) {
 				return null;
 			}
 
+			// Parse the response
 			WebLogWebsitesResponse websitesResponse;
 			try {
 				websitesResponse = WebLogWebsitesResponse.parseFrom(response.getData());
@@ -76,6 +88,7 @@ public class WeblogActivity extends Activity {
 		protected void onPostExecute(final List<WebLogWebsite> data) {
 			mWebLogTask = null;
 
+			// Prepare the array for the list of websites
 			ArrayList<WebLogWebsite> dataArray = new ArrayList<WebLogWebsite>(data);
 			
 			if (data != null) {				
@@ -96,6 +109,11 @@ public class WeblogActivity extends Activity {
 		}
 	}
 
+	/**
+	 * This list adapter will display the list of visited websites
+	 * @author dbub
+	 *
+	 */
 	private class WebLogListAdapter extends ArrayAdapter<WebLogWebsite> {
 
 		public WebLogListAdapter(Context context, int textViewResourceId, 
@@ -134,6 +152,7 @@ public class WeblogActivity extends Activity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, View v, int position, long id) {
+				// On click on a list element, open the details activity, which will show the data stoored for the webpage.
 				WebLogWebsite item = (WebLogWebsite) parent.getAdapter().getItem(position);
 				
 				Intent openWeblogWebsiteIntent = new Intent(parent.getContext(), WebsiteDetailsActivity.class);
