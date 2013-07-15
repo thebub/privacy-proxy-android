@@ -174,13 +174,9 @@ public class WebsiteDetailsActivity extends Activity {
 	 */
 	private class WebsiteDetailsListAdapter extends ArrayAdapter<WeblogEntry> {
 
-		private ArrayList<WeblogEntry> websiteDetailsList;
-
 		public WebsiteDetailsListAdapter(Context context, int textViewResourceId, 
 				ArrayList<WeblogEntry> list) {
 			super(context, textViewResourceId, list);
-			this.websiteDetailsList = new ArrayList<WeblogEntry>();
-			this.websiteDetailsList.addAll(list);
 		}
 
 		@Override
@@ -191,9 +187,9 @@ public class WebsiteDetailsActivity extends Activity {
 						Context.LAYOUT_INFLATER_SERVICE);
 				convertView = vi.inflate(R.layout.layout_webdetails_entry, null);
 			}
-
-			// Get the urrent entry
-			WeblogEntry entry = this.websiteDetailsList.get(position);
+			
+			// Get the current entry
+			WeblogEntry entry = this.getItem(position);
 			
 			// Fill all fields with the corresponding data
 			TextView desc = (TextView) convertView.findViewById(R.id.weblogdetails_entry_desc);

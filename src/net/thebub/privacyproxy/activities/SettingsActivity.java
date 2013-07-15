@@ -132,7 +132,7 @@ public class SettingsActivity extends Activity {
 				convertView = vi.inflate(R.layout.layout_settings_entry, null);
 			}
 			
-			// Get the setting fpr the current position
+			// Get the setting for the current position
 			PersonalDataEntry setting = this.getItem(position);
 			
 			// Fill all field of the setting entry with the corresponding data
